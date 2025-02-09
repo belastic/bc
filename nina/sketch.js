@@ -21,7 +21,7 @@ let imageDisplayTime = 1000;
 let isDisplayingImage = false;
 let imageDisplayStart = 0;
 
-let belaBucket = "https://beladata.s3.us-west-1.amazonaws.com/";
+let assetBaseUrl = "assets/";
 let videoFiles = [
   "ppl.mp4",
   "tree.mp4",
@@ -59,7 +59,7 @@ let kickThreshold = 200; // Energy threshold for drum kicks
 
 function loadVideos() {
   for (let f of videoFiles) {
-    let vid = createVideo(belaBucket + f);
+    let vid = createVideo(assetBaseUrl + f);
     vid.hide();
     vid.volume(0);
     vid.loop();
@@ -67,7 +67,7 @@ function loadVideos() {
   }
   shuffle(videos);
 
-  scissorsVid = createVideo(belaBucket + "scissors.mp4");
+  scissorsVid = createVideo(assetBaseUrl + "scissors.mp4");
   scissorsVid.hide();
   scissorsVid.volume(0);
   scissorsVid.play();
@@ -75,19 +75,19 @@ function loadVideos() {
 
 function loadImages() {
   for (let f of imageFiles) {
-    let img = loadImage(belaBucket + f);
+    let img = loadImage(assetBaseUrl + f);
     append(images, img);
   }
   for (let f of cutoutFiles) {
-    let img = loadImage(belaBucket + f);
+    let img = loadImage(assetBaseUrl + f);
     append(cutoutImages, img);
   }
-  kickImg = loadImage("buzz.png");
-  grainImg = loadImage("glass2-min.jpg");
+  kickImg = loadImage(assetBaseUrl + "buzz.png");
+  grainImg = loadImage(assetBaseUrl + "glass2-min.jpg");
 }
 
 function loadSong() {
-  song = loadSound(belaBucket + "nina.mp3");
+  song = loadSound(assetBaseUrl + "nina.mp3");
 }
 
 function preload() {
