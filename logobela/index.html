@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Bela Logo</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    #scene-container {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background-color: black;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.137.5/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.137.5/examples/js/controls/OrbitControls.js"></script>
+
+</head>
+
+<body>
+  <div id="scene-container">
+  </div>
+
+  <script language="javascript">
+    const UNIT_X = new THREE.Vector3(1, 0, 0);
+    const UNIT_Y = new THREE.Vector3(0, 1, 0);
+    const UNIT_Z = new THREE.Vector3(0, 0, 1);
+
+    const W = 0.05;
+    // const L = 1.0; // L is always 1.  You can scale it later
+    const MAT = new THREE.MeshBasicMaterial();
+    const MATR = new THREE.MeshBasicMaterial({ color: 0xff8080 });
+
+    function limb(x0, y0, z0, axis) {
+      const r = W / 2.0;
+
+      const g = new THREE.Group();
+
+      const legg = new THREE.CylinderGeometry(r, r, 1, 32, 16);
+      const leg = new THREE.Mesh(legg, MAT);
+
+      const bottomCapg = new THREE.SphereGeometry(r, 32, 16, 0, 2 * Math.PI, Math.PI / 2, Math.PI);
+      const bottomCap = new THREE.Mesh(bottomCapg, MATR);
+      bottomCap.position.y = -0.5;
+
+      const topCapg = new THREE.SphereGeometry(r, 32, 16, 0, 2 * Math.PI, 0, Math.PI / 2);
+      const topCap = new THREE.Mesh(topCapg, MATR);
+      topCap.position.y = 0.5;
+
+      g.add(bottomCap);
+      g.add(leg);
+      g.add(topCap);
+
+      // translate and rotate according to the axis
+      if (axis == 'X') {
+        const q = new THREE.Quaternion();
+        q.setFromAxisAngle(UNIT_Z, Math.PI / 2);
+        g.quaternion.copy(q);
+        g.position.x = 0.5;
+      } else if (axis == 'Y') {
+        g.position.y = 0.5;
+      } else if (axis == 'Z') {
+        const q = new THREE.Quaternion();
+        q.setFromAxisAngle(UNIT_X, Math.PI / 2);
+        g.quaternion.copy(q);
+        g.position.z = 0.5;
+      }
+      g.position.add(new THREE.Vector3(x0, y0, z0));
+
+      return g;
+    }
+
+    const container = document.querySelector('#scene-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('black');
+
+    const bee = new THREE.Group();
+    // x limbs
+    bee.add(limb(-2, 0, 0, 'X'));
+    bee.add(limb(-2, -1, 0, 'X'));
+    bee.add(limb(-2, 0, 1, 'X'));
+    bee.add(limb(-2, -1, 1, 'X'));
+
+    // y
+    bee.add(limb(-2, 0, 0, 'Y'));
+    bee.add(limb(-2, -1, 0, 'Y'));
+    bee.add(limb(-2, 0, 1, 'Y'));
+    bee.add(limb(-2, -1, 1, 'Y'));
+    bee.add(limb(-1, -1, 0, 'Y'));
+    bee.add(limb(-1, -1, 1, 'Y'));
+
+    // z
+    bee.add(limb(-2, 0, 0, 'Z'));
+    bee.add(limb(-1, 0, 0, 'Z'));
+    bee.add(limb(-2, 1, 0, 'Z'));
+
+    const cee = new THREE.Group();
+    cee.add(limb(0, 0, 0, 'X'));
+    cee.add(limb(0, 0, 1, 'X'));
+    cee.add(limb(0, -1, 0, 'X'));
+    cee.add(limb(0, -1, 1, 'X'));
+
+    cee.add(limb(0, -1, 0, 'Y'));
+    cee.add(limb(0, -1, 1, 'Y'));
+
+    cee.add(limb(0, 0, 0, 'Z'));
+    cee.add(limb(0, -1, 0, 'Z'));
+
+    scene.add(bee);
+    scene.add(cee);
+
+    const fov = 35;
+    const aspect = 1;
+    const near = 0.1;
+    const far = 100;
+
+    const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    camera.position.set(0, 0, 10);
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(200, 200);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.append(renderer.domElement);
+    renderer.render(scene, camera);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // required if controls.enableDamping or controls.autoRotate are set to true
+      controls.update();
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+
+  </script>
+</body>
+
+</html>
