@@ -24,14 +24,14 @@ let imageDisplayStart = 0;
 
 let assetBaseUrl = "assets/";
 let videoFiles = [
-  "ppl.mp4",
-  "tree.mp4",
-  "leaf.mp4",
-  "purp.mp4",
-  "pad.mp4",
-  "glo.mp4",
-  "pixel.mp4",
-  "circle.mp4",
+  "ppl.webm",
+  "tree.webm",
+  "leaf.webm",
+  "purp.webm",
+  "pad.webm",
+  "glo.webm",
+  "pixel.webm",
+  "circle.webm",
 ];
 
 let imageFiles = ["pan1.png", "pan2.png", "pan3.png", "pan4.png"];
@@ -68,7 +68,7 @@ function loadVideos() {
   }
   shuffle(videos);
 
-  scissorsVid = createVideo(assetBaseUrl + "scissors.mp4");
+  scissorsVid = createVideo(assetBaseUrl + "scissors.webm");
   scissorsVid.hide();
   scissorsVid.volume(0);
 }
@@ -417,7 +417,7 @@ function startPlaying() {
 }
 
 function draw() {
-  background(32, 0, 0);
+  background(0, 0, 0);
   if (!playing) {
     playButton.display();
     return;
@@ -455,7 +455,8 @@ function draw() {
     let s2 = height / grainImg.height;
     let s = max(s1, s2);
     blendMode(OVERLAY);
-    image(grainImg, 0, 0, grainImg.width * s, grainImg.height*s);
+    tint(255, 60);
+    image(grainImg, 0, 0, grainImg.width * s, grainImg.height * s);
     pop();
   }
   lastDrawMs = curMs;
