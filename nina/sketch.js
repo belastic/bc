@@ -1,6 +1,7 @@
-//I was inspired by the idea of concurrent scrolling. Footage is mostly original and some edited found footage from the Prelinger Archives. 
+// I was inspired by the idea of concurrent scrolling. Footage is mostly
+// original and some edited found footage from the Prelinger Archives. 
 
-"uses strict";
+"use strict";
 ////////////////////////////////////////////////////////////////////////
 // Tunables
 let TILE_PADDING = 0; // transparent space between tiles
@@ -62,7 +63,7 @@ function loadVideos() {
     let vid = createVideo(assetBaseUrl + f);
     vid.hide();
     vid.volume(0);
-    vid.loop();
+    vid.autoplay(false);
     append(videos, vid);
   }
   shuffle(videos);
@@ -70,7 +71,6 @@ function loadVideos() {
   scissorsVid = createVideo(assetBaseUrl + "scissors.mp4");
   scissorsVid.hide();
   scissorsVid.volume(0);
-  scissorsVid.play();
 }
 
 function loadImages() {
@@ -379,8 +379,19 @@ function displayCymbalImage() {
   }
 }
 
+let playButton;
+let buttonSize;
+let playing = false;
+let startTimeMs = 0;
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  buttonSize = height * 0.04;
+  playButton = new PlayButton(width / 2, height / 2, buttonSize);
+  noLoop();
+}
+
+function startPlaying() {
   shuffle(videos);
   shuffle(images);
   shuffle(cutoutImages);
@@ -388,16 +399,30 @@ function setup() {
   reTile();
 
   song.play();
+  scissorsVid.play();
+  for (let vid of videos) {
+    vid.loop();
+    print(vid);
+  }
+
   fft = new p5.FFT();
   setInterval(reTile, RETILE_INTERVAL * 1000);
 
   for (let t of cymbalTimes) {
     setTimeout(processCymbal, t);
   }
+  loop();
+  startTimeMs = millis();
+  playing = true;
 }
 
 function draw() {
-  background(0, 0, 0);
+  background(32, 0, 0);
+  if (!playing) {
+    playButton.display();
+    return;
+  }
+
   rectMode(CORNER);
   imageMode(CORNER);
 
@@ -409,7 +434,7 @@ function draw() {
   if (
     scissorsVid != null &&
     scissorsVid.width != 0 &&
-    scissorsVid.duration() * 1000 > curMs
+    scissorsVid.duration() * 1000 > curMs - startTimeMs
   ) {
     imageMode(CENTER);
     blendMode(EXCLUSION);
@@ -436,6 +461,36 @@ function draw() {
   lastDrawMs = curMs;
 }
 
+class PlayButton {
+  constructor(x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+  }
+
+  display() {
+    fill(128, 32, 0);
+    noStroke();
+    ellipse(this.x, this.y, this.size * 2);
+    fill(255);
+    triangle(
+      this.x - this.size / 4, this.y - this.size / 1.5,
+      this.x - this.size / 4, this.y + this.size / 1.5,
+      this.x + this.size / 2, this.y
+    );
+  }
+
+  contains(px, py) {
+    return dist(px, py, this.x, this.y) < this.size;
+  }
+}
+
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+}
+
+function mousePressed() {
+  if (!playing && playButton.contains(mouseX, mouseY)) {
+    startPlaying();
+  }
 }
