@@ -382,15 +382,13 @@ function displayCymbalImage() {
 }
 
 let playButton;
-let buttonSize;
 let playing = false;
 let startTimeMs = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  buttonSize = height * .06;
-  playButton = new PlayButton(width / 2, height / 2, buttonSize);
-  noLoop();
+  let radius = min(width, height) / 16;
+  playButton = new PlayButton(width / 2, height / 2, radius);
 }
 
 function startPlaying() {
@@ -413,7 +411,6 @@ function startPlaying() {
   for (let t of cymbalTimes) {
     setTimeout(processCymbal, t);
   }
-  loop();
   startTimeMs = millis();
   playing = true;
 }
@@ -424,7 +421,6 @@ function draw() {
     push();
     imageMode(CENTER);
     image(previewImg, width / 2, height / 2, width, height);
-    playButton.display();
     pop();
     return;
   }
@@ -469,35 +465,28 @@ function draw() {
 }
 
 class PlayButton {
-  constructor(x, y, size) {
+  constructor(x, y, radius) {
     this.x = x;
     this.y = y;
-    this.size = size;
-  }
+    this.radius = radius;
 
-  display() {
-    fill(72, 72, 72, 144);
-    noStroke();
-    ellipse(this.x, this.y, this.size * 2);
-    fill(240);
-    triangle(
-      this.x - this.size / 4, this.y - this.size / 2.0,
-      this.x - this.size / 4, this.y + this.size / 2.0,
-      this.x + this.size / 2, this.y
-    );
+    this.btn = createButton('');
+    this.btn.class("play-button");
+    this.btn.position(width / 2 - this.radius, height / 2 - this.radius);
+    this.btn.mousePressed(() => {
+      this.btn.hide();
+      startPlaying();
+    });
   }
-
-  contains(px, py) {
-    return dist(px, py, this.x, this.y) < this.size;
+  position(x, y) {
+    this.x = x;
+    this.y = y;
+    this.btn.position(x - this.radius, y - this.radius);
   }
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+  playButton.position(width / 2, height / 2);
 }
 
-function mousePressed() {
-  if (!playing && playButton.contains(mouseX, mouseY)) {
-    startPlaying();
-  }
-}
