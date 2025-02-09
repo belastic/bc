@@ -41,6 +41,7 @@ let cymbalTimes = [24050, 134000];
 
 let scissorsVid = null;
 let grainImg = null;
+let previewImg = null;
 let kickImg;
 let song;
 let fft;
@@ -84,6 +85,7 @@ function loadImages() {
   }
   kickImg = loadImage(assetBaseUrl + "buzz.png");
   grainImg = loadImage(assetBaseUrl + "glass2-min.jpg");
+  previewImg = loadImage(assetBaseUrl + "preview.jpg");
 }
 
 function loadSong() {
@@ -386,7 +388,7 @@ let startTimeMs = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  buttonSize = height * 0.04;
+  buttonSize = height * .06;
   playButton = new PlayButton(width / 2, height / 2, buttonSize);
   noLoop();
 }
@@ -419,7 +421,11 @@ function startPlaying() {
 function draw() {
   background(0, 0, 0);
   if (!playing) {
+    push();
+    imageMode(CENTER);
+    image(previewImg, width / 2, height / 2, width, height);
     playButton.display();
+    pop();
     return;
   }
 
@@ -470,13 +476,13 @@ class PlayButton {
   }
 
   display() {
-    fill(128, 32, 0);
+    fill(72, 72, 72, 144);
     noStroke();
     ellipse(this.x, this.y, this.size * 2);
-    fill(255);
+    fill(240);
     triangle(
-      this.x - this.size / 4, this.y - this.size / 1.5,
-      this.x - this.size / 4, this.y + this.size / 1.5,
+      this.x - this.size / 4, this.y - this.size / 2.0,
+      this.x - this.size / 4, this.y + this.size / 2.0,
       this.x + this.size / 2, this.y
     );
   }
