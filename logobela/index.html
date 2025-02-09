@@ -11,9 +11,9 @@
 
     #scene-container {
       position: absolute;
-      width: 200px;
-      height: 200px;
-      background-color: black;
+      width: 50vh;
+      height: 50vh;
+      /* background-color: black; */
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/three@0.137.5/build/three.min.js"></script>
@@ -112,6 +112,7 @@
 
     scene.add(bee);
     scene.add(cee);
+    scene.position.set(.5, 0, 0);
 
     const fov = 35;
     const aspect = 1;
@@ -119,10 +120,10 @@
     const far = 100;
 
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.set(0, 0, 10);
+    camera.position.set(-0, 0, 10);
 
     const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(200, 200);
+    renderer.setSize(container.offsetWidth, container.offsetHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     container.append(renderer.domElement);
     renderer.render(scene, camera);
