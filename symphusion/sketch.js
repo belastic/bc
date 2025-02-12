@@ -58,7 +58,9 @@ function setup() {
 
 function draw() {
   background(0);
-  orbitControl();
+  // orbit controls are cool, but they interfere with the mouse interaction
+  // orbitControl();
+  
   // change mouse coordinates to be relative to the diffusion rectangle
   // so the diffusion class can handle painting the mouse
   let topleft = createVector(
