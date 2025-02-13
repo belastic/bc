@@ -26,7 +26,7 @@ let params = {
     offset: 0.1,
     pixel_size: 4.0,
     pixel_radius: 0.9,
-    pixelate: false,
+    pixelate: 0,
     screen_grain: false,
     screen_tint: "#c64962b0",
   },
@@ -113,7 +113,8 @@ reactionTab.addInput(params, "wrap");
 
 const renderTab = tabs.pages[1];
 renderTab.addInput(params.render, "emboss");
-renderTab.addInput(params.render, "pixelate");
+renderTab.addInput(params.render, "pixelate",
+  { options: { 'None': 0, 'Square Grid': 1, 'Hex Grid': 2, 'ASCII': 3 } });
 renderTab.addInput(params.render, "offset", { min: -0.5, max: 0.5 });
 renderTab.addInput(params.render, "pixel_size", { min: 1.0, max: 100.0 });
 renderTab.addInput(params.render, "pixel_radius", { min: 0.2, max: 1.2 });

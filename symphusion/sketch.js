@@ -17,6 +17,8 @@ let diffusion;
 let drumbit;
 let refractor; // refraction shader
 let message;
+let playing = false;
+let playButton;
 
 // for saving the original pixel density and using it for 2d graphics
 let screen_pixel_density;
@@ -25,10 +27,13 @@ let screen_pixel_density;
 // grayscale only
 let screenImg;
 let screenFile = "assets/screen.jpg"; // or use screen-gray.jpg
+let previewImg;
+let previewFile = "assets/preview.jpg";
 
 function preload() {
   drumbit_preload();
   screenImg = loadImage(screenFile);
+  previewImg = loadImage(previewFile);
 }
 
 function setup() {
@@ -44,23 +49,43 @@ function setup() {
   drumbit = new Drumbit(dims[1].x, dims[1].y);
   drumbit.setup(params.drumbit.sound_kit);
   drumbit.onBeat(handleBeat);
-  drumbit.start();
-
+  
   diffusion = new Diffusion(dims[0].x, dims[0].y);
-
   message = new FadingMessage();
-
+  
   // start out with the pane hidden
   pane.hidden = true;
+  let radius = min(width, height) / 16;
+  playButton = new PlayButton(width / 2, height / 2, radius);
+}
 
+function startPlaying() {
+  drumbit.start();
+  diffusion.start();
   message.flash("Ctrl+Shift+H for control panel", 5000);
+  playing = true;
 }
 
 function draw() {
   background(0);
+  if (!playing) {
+    push();
+    imageMode(CENTER);
+    let aspect = previewImg.width / previewImg.height;
+    let w = width;
+    let h = w / aspect;
+    if (h > height) {
+      h = height;
+      w = h * aspect;
+    }
+    image(previewImg, 0, 0, w, h);
+    pop();
+    return;
+  }
+
   // orbit controls are cool, but they interfere with the mouse interaction
   // orbitControl();
-  
+
   // change mouse coordinates to be relative to the diffusion rectangle
   // so the diffusion class can handle painting the mouse
   let topleft = createVector(
@@ -234,6 +259,27 @@ class FadingMessage {
   }
 }
 
+class PlayButton {
+  constructor(x, y, radius) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+
+    this.btn = createButton('');
+    this.btn.class("play-button");
+    this.btn.position(width / 2 - this.radius, height / 2 - this.radius);
+    this.btn.mousePressed(() => {
+      this.btn.hide();
+      startPlaying();
+    });
+  }
+  position(x, y) {
+    this.x = x;
+    this.y = y;
+    this.btn.position(x - this.radius, y - this.radius);
+  }
+}
+
 // calculate dimensions for diffusion and drumbit
 // diffusion is bigger and drumbit sits inside it
 // we need to figure out if the canvas is too tall or too wide
@@ -337,4 +383,5 @@ function windowResized() {
   let dims = computeDimensions();
   drumbit.resize(dims[1].x, dims[1].y);
   diffusion.resize(dims[0].x, dims[0].y);
+  playButton.position(width / 2, height / 2);
 }

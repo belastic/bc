@@ -5,6 +5,7 @@ class Diffusion {
     this.width = w;
     this.height = h;
     this.density = density;
+    this.running = false;
 
     // src and dst are two framebuffers where the reaction occurs
     this.src = createFramebuffer({
@@ -57,8 +58,14 @@ class Diffusion {
     this.img.resize(w * this.density, h * this.density);
   }
 
+  start() {
+    this.running = true;
+  }
+  
   // update the reaction
   update(m) {
+    if (!this.running) return;
+
     // check if mouse is to be considered. if the mouse is pressed, and in our region
     // but no CONTROL is held down - it is for us; if CONTROL is held down - it is for
     // the drumbit
